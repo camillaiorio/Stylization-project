@@ -1,1 +1,4 @@
-This is taken, with slight modifications, from the repository https://github.com/rrmina/fast-neural-style-pytorch
+This is taken, with slight modifications, from the repository https://github.com/rrmina/fast-neural-style-pytorch.
+
+Note: we tried to upload the complete repository, nevertheless we had problems with very large files > 100 mb. Therefore we suggest to keep this section as a reference,
+however to download the original repository and then subsequently substitute the stylize.py in this folder in the one of the original repository.
