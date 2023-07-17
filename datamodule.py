@@ -1,8 +1,6 @@
 import pytorch_lightning as pl
-import torch
 from torch.utils.data import DataLoader
 from torchvision import transforms,datasets
-import itertools
 
 class data_module(pl.LightningDataModule):
 
@@ -28,34 +26,6 @@ class data_module(pl.LightningDataModule):
 
         self.transform_test = transforms.Compose(
             [transforms.ToTensor(), transforms.Normalize([0.485, 0.456, 0.406],[0.229, 0.224, 0.225])])
-
-    """
-    def prepare_data(self):
-
-        datasets.CocoDetection(self.data_dir, train=True, download=True)
-        datasets.CocoDetection(self.data_dir, train=False, download=True)
-    """
-
-    """
-    def balance_dataset(self, dataset):
-        datas = []
-        targs = []
-        classes = 10
-        for i in range(classes):
-            ci = torch.argwhere(dataset.targets == i)
-            fci = dataset.data[ci]
-            idx = torch.randperm(len(fci))[:int(len(fci) / (classes - 1)) + 1]  # random selection of images from each class
-            fci = fci[idx].squeeze()
-            targi = dataset.targets[ci]
-            targi = targi[idx].squeeze()
-            datas.append(fci)
-            targs.append(targi)
-
-        datas = list(itertools.chain(*datas))
-        targs = list(itertools.chain(*targs))
-        dataset.data = torch.stack(datas)
-        dataset.targets = torch.stack(targs)
-        return dataset"""
 
     def setup(self, stage=None):
 

@@ -1,51 +1,10 @@
-import glob
-import itertools
-import time
-
 import torch
-import torchvision.utils
-from PIL import Image
 from torch.utils.data import Dataset
 from tqdm import tqdm
 
 from Style_transfer import utils,transformer
 import os
 from torchvision import transforms,datasets
-
-#STYLE_TRANSFORM_PATH = "Style_transfer/transforms/mosaic.pth"
-#PRESERVE_COLOR = False
-
-
-def balance_dataset(dataset, normal):
-    datas = []
-    targs = []
-    classes = 10
-    for i in range(classes):
-        if i == normal:
-            ci = (dataset.targets == normal)
-            fci = dataset.data[ci]
-            targi = dataset.targets[ci]
-        else:
-            ci = torch.argwhere(dataset.targets == i)
-            fci = dataset.data[ci]
-            idx = torch.randperm(len(fci))[
-                  :int(len(fci) / (classes - 1)) + 1]  # random selection of images from each class
-            fci = fci[idx].squeeze()
-            targi = dataset.targets[ci]
-            targi = targi[idx].squeeze()
-        datas.append(fci)
-        targs.append(targi)
-
-    datas = list(itertools.chain(*datas))
-    targs = list(itertools.chain(*targs))
-    dataset.data = torch.stack(datas)
-    dataset.targets = torch.stack(targs)
-    nr = torch.argwhere(dataset.targets == normal)
-    dataset.targets[:] = 0
-    dataset.targets[nr] = 1
-
-    return dataset
-
 
 def stylize_imagenet(style_paths, data_dir, save_folders, batch_size=128, PRESERVE_COLOR=False):
     """Stylizes images in a folder by batch
@@ -87,17 +46,14 @@ def stylize_imagenet(style_paths, data_dir, save_folders, batch_size=128, PRESER
     # Load Transformer Network
     net0 = transformer.TransformerNetwork()
     net0.load_state_dict(torch.load(style_paths[0],map_location=device))
-    net0 = net0.to(device)
     net0.eval()
 
     net1 = transformer.TransformerNetwork()
     net1.load_state_dict(torch.load(style_paths[1], map_location=device))
-    net1 = net1.to(device)
     net1.eval()
 
     net2 = transformer.TransformerNetwork()
     net2.load_state_dict(torch.load(style_paths[2], map_location=device))
-    net2 = net2.to(device)
     net2.eval()
 
     # Stylize batches of images
@@ -134,6 +90,3 @@ def stylize_imagenet(style_paths, data_dir, save_folders, batch_size=128, PRESER
 
             if curr_style>2:
                 curr_style=0
-
-#torch.manual_seed(56)
-#stylize_imagenet(STYLE_TRANSFORM_PATH, "coco_data/train2017", "stylized_data/", 128)

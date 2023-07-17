@@ -18,7 +18,7 @@ if __name__=="__main__":
                         default="Wrong pick")
     args = parser.parse_args()
     if args.model == "Stylize":
-        stylize_imagenet(styles, "coco_data/train2017", "stylized_data/train/", 64)
+        stylize_imagenet(styles, "coco_data/train2017", "stylized_data/train/", 64, PRESERVE_COLOR)
     elif args.model == "Diffusion":
         start_training()
     else:

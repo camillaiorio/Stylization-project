@@ -146,7 +146,7 @@ class UNet(nn.Module):
         t = self.time_embeddings(t, 256)
 
         if label is not None:
-            t += self.emb_layer(label)  # for making the net conditional we ought to add the label somewhere, and t was the choice
+            t += self.emb_layer(label).to(self.device)  # for making the net conditional we ought to add the label somewhere, and t was the choice
 
         x1 = self.in_conv(x)
 

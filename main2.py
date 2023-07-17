@@ -124,14 +124,13 @@ def start_training():
     batch_size = 64
     num_classes = 3
     epochs=2
-    #unet="original"
-    unet="Pro"
+    unet="original"
+    #unet="Pro"
     print("You chose Diffusion")
     torch.set_float32_matmul_precision("high")
     data_module_class=data_module("./stylized_resized/",batch_size = batch_size)
     model = DiffusionModel_Cond(device,num_classes,unet)
     #compiled_model = torch.compile(model,mode="max-autotune")
     train(data_module_class, model, epochs, device,ckpt_path)
-    #train(data_module_class,compiled_model,epochs,device=device)
     #test(data_module_class,model,epochs,device=device)
     #generate_image(3, torch.as_tensor([0, 1, 2]), 3, ckpt_path, device, unet)

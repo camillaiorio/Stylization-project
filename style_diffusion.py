@@ -24,7 +24,6 @@ class DiffusionModel_Cond(pl.LightningModule):
                 "kaizerkam/sd-class-comics-64"
             ).to(self.device_)
 
-            #self.unet = self.unet
             self.unet.save_pretrained("pro_weights")
         #TODO
         """
@@ -59,7 +58,7 @@ class DiffusionModel_Cond(pl.LightningModule):
             loss = F.mse_loss(eps_theta, noise)
         return loss.item()
 
-    def training_step(self, batch, batch_nb):
+    def training_step(self, batch):
 
         input_images, input_labels = batch
         batch_size = input_images.shape[0]
@@ -78,15 +77,14 @@ class DiffusionModel_Cond(pl.LightningModule):
 
         # Unet predicts noise added to image xt at time t:
         if self.unet_chosen == "original":
-            eps_theta = self.unet(xt, t.unsqueeze(1), input_labels) #TODO works with smp?
+            eps_theta = self.unet(xt, t.unsqueeze(1), input_labels)
         else:
             eps_theta = self.unet(xt, t, input_labels).sample
 
-        # compute loss between predicted noise and true noise (we tried both mse loss and the huber loss)
+        # compute loss between predicted noise and true noise
         loss = F.mse_loss(eps_theta, noise)
 
         self.log_dict({"Training Loss": loss}, on_step=False, on_epoch=True)
-        # self.log_dict({"Train loss anomaly": loss_a,"Train loss normal": loss_n}, on_step = False, on_epoch = True)
 
         return loss
 
@@ -169,8 +167,6 @@ class DiffusionModel_Cond(pl.LightningModule):
             x_t = x_T
             sample_steps = torch.arange(self.T - 1, 0, -1)
             for t in sample_steps:
-                if t%100==0:
-                    print(t)
                 if t > 1:
                     z = torch.randn(x_t.shape, device=self.device)
                 else:
